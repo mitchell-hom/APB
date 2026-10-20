@@ -1,0 +1,104 @@
+################################################################
+# DESIGN REQUIREMENTS
+# Each design requirement will be labelled with a unique identifier
+# in the form "DR*". If a requirement is deprecated, identifiers 
+# will not shift and a waiver will be created for it. This is
+# for traceability.
+################################################################
+
+#### SIGNALS ####
+### Section 2.1: AMBA APB signals (appendix B also referenced for 
+# compatibility ####
+# basic signal presence
+DR0 PCLK signal is present
+DR1 PRESETn signal is present 
+DR2 PADDR signal is present
+DR3 PSELx signal is present
+DR4 PENABLE signal is present
+DR5 PWRITE signal is present
+DR6 PWDATA signal is present
+DR7 PREADY optional for output ports
+DR8 PRDATA signal is present
+DR9 PSUBERR optional for output ports
+
+# signal details
+DR10 all APB signals timed against rising edge of PCLK
+DR11 PRESETn is active-low
+DR12 PADDR no larger than 32 bits wide
+DR13 requester generates a PSELx signal for each completer
+DR14 PSELx asserted only when completer is selected and data transfer required
+DR15 PENABLE asserted only when indicating second and subsequent 
+cycles of a transfer
+DR16 PWRITE HIGH only when indicating a WRITE access
+DR17 PWRITE LOW only when indicating a READ access
+DR18 PWDATA only asserted during write cycle when PWRITE is HIGH
+DR19 PWDATA is 8, 16, or 32 bits wide
+?DR20 PREADY only asserted when extending a transfer (by completer)
+DR21 PRDATA only asserted by selected completer during read cycles when
+PWRITE is LOW
+DR22 PRDATA is 8, 16, or 32 bits wide
+DR23 PSUBERR only asserted by completer when indicating an error 
+condition during an APB transfer
+DR24 PRDATA and PWDATA should have the same bus width
+DR25 data transfers on read and write buses should not occur concurrently
+
+
+#### WRITE TRANSFERS ####
+### Section 3.1: Write Transfers ###
+## setup phase ##
+DR26 PSEL = 1 during setup phase
+DR27 PADDR = VALID during setup phase
+DR28 PWRITE = VALID during setup phase
+DR29 PWDATA = VALID during setup phase
+
+## access phase ##
+# during access phase:
+DR30 PENABLE = 1
+DR31 PREADY = 1
+DR32 ALL CONTROL SIGNALS = VALID until transfer completes
+DR33 at end of transfer, PENABLE = 0
+DR34 at end of transfer, PSEL = 0 unless there is another transfer
+
+## wait states ##
+# during wait states:
+DR35 PENABLE = 1
+DR36 PREADY = 0
+DR37 PADDR = UNCHANGED 
+DR38 PWRITE = UNCHANGED 
+DR39 PSELx = UNCHANGED 
+DR40 PENABLE = UNCHANGED 
+DR41 PWDATA = UNCHANGED 
+DR42 PSTRB = UNCHANGED 
+DR43 PPROT = UNCHANGED 
+DR44 PAUSER = UNCHANGED 
+DR45 PWUSER = UNCHANGED
+DR46 any number of cycles can be added with wait state
+
+#### READ TRANSFERS ####
+### Section 3.3: Read Transfers ###
+## setup phase ##
+DR47 PSEL = 1 during setup phase
+DR48 PADDR = VALID during setup phase
+DR49 PWRITE = VALID during setup phase
+
+## access phase ##
+# during access phase:
+DR50 PENABLE = 1
+DR51 PREADY = 1
+DR52 ALL CONTROL SIGNALS = VALID until transfer completes
+DR53 at end of transfer, PENABLE = 0
+DR54 at end of transfer, PSEL = 0 unless there is another transfer
+DR55 completer must provide data before end of read transfer
+
+## wait states ##
+# during wait states:
+DR56 PENABLE = 1
+DR57 PREADY = 0
+DR58 PADDR = UNCHANGED 
+DR59 PWRITE = UNCHANGED 
+DR60 PSELx = UNCHANGED 
+DR61 PENABLE = UNCHANGED 
+DR62 PPROT = UNCHANGED
+DR63 any number of cycles can be added with wait state
+
+# TODO: 
