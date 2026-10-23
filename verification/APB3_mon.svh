@@ -3,6 +3,7 @@ class APB3_mon extends uvm_monitor;
 
 	// declarations
 	uvm_analysis_port #(packet) mon_ap;
+	APB3_if vif;
 
 	// constructor
 	function new(string name, uvm_component parent);
