@@ -101,4 +101,36 @@ DR61 PENABLE = UNCHANGED
 DR62 PPROT = UNCHANGED
 DR63 any number of cycles can be added with wait state
 
-# TODO: 
+#### ERROR RESPONSE ####
+DR64 PSUBERR should only be considered valid during last cycle of APB transfer, when
+PSEL && PENABLE && PREADY all asserted
+DR65 if a completer does not support PSUBERR, requester should tie it LOW
+
+#### OPERATING STATES ####
+DR66 interface remains in SETUP state for only one clock cycle before moving to
+ACCESS state on next rising clock edge
+DR67 PADDR should not change between SETUP and ACCESS phases, or between cycles in ACCESS state
+DR68 PWRITE should not change between SETUP and ACCESS phases, or between cycles in ACCESS state
+DR67 PWDATA (during write) should not change between SETUP and ACCESS phases, or between cycles in ACCESS state
+DR68 interface should remain in ACCESS state while PREADY held low
+DR69 interface should transition to IDLE state if PREADY driven high and no more transfers required (PSELx = 0)
+DR70 interface should transition directlly to SETUP state if another transfer follows (PSELx = 1)
+
+#### SIGNAL VALIDITY ####
+DR71 PSEL always valid
+DR72 PREADY valid when PSEL && PENABLE
+DR73 PRDATA valid during read when PREADY && PSEL && PENABLE
+DR74 PSUBERR valid when PREADY && PSEL && PENABLE
+
+
+#### DESIGN WARNINGS ####
+DW0 PSUBERR low when PSEL low || PENABLE low || or PREADY low (section 3.4)
+DW1 if PPROT present on completer, but not requester, not compatible
+
+
+#### NOTES ####
+N0 transactions with an error may or may not change state of peripheral. 
+Either is acceptable (section 3.4)
+N1 read transactions with errors have undefined behavior. Return value
+is "don't care"
+N2 3.4.3???
